@@ -14,7 +14,7 @@ type User struct {
 	Sobrenome string    `json:"sobrenome"`
 	Email     string    `json:"email"`
 	Senha     string    `json:"-"`
-	CriadoEm  time.Time `j́son:"criadoEm"`
+	CriadoEm  time.Time `json:"criadoEm"`
 }
 
 type RegisterUSerPayload struct {
