@@ -7,6 +7,7 @@ import (
 	"github.com/Luan-Pereira66/api-ecommerce/service/auth"
 	"github.com/Luan-Pereira66/api-ecommerce/types"
 	"github.com/Luan-Pereira66/api-ecommerce/utils"
+	"github.com/go-playground/validator/v10"
 	"github.com/gorilla/mux"
 )
 
@@ -32,9 +33,19 @@ func (h *Handler) handleLogin(w http.ResponseWriter, r *http.Request) {
 func (h *Handler) handleRegister(w http.ResponseWriter, r *http.Request) {
 	//obter carga útil JSON
 	var payload types.RegisterUSerPayload
-	if err := utils.ParseJSON(r, payload); err != nil {
+	if err := utils.ParseJSON(r, &payload); err != nil {
 		utils.WriteError(w, http.StatusBadRequest, err)
+
+		return
 	}
+
+	// validação payload
+	if err := utils.Validate.Struct(payload); err != nil {
+		errors := err.(validator.ValidationErrors)
+		utils.WriteError(w, http.StatusBadRequest, fmt.Errorf("invalid payload, &v", errors))
+		return
+	}
+
 	// verifique se o usuário existe
 	_, err := h.store.GetUSerByEmail(payload.Email)
 
